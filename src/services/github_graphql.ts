@@ -1,9 +1,10 @@
-import type { GithubDataResponse } from "./types";
+import Notiflix from "notiflix";
+import type { Repository } from "../types/repository";
 
 export async function fetchAllRepositories(
   token: string,
   username: string
-): Promise<GithubDataResponse> {
+): Promise<Repository[]> {
   const body = {
     query: `query GetAllRepositories($username: String!){
       user(login: $username) {
@@ -41,9 +42,12 @@ export async function fetchAllRepositories(
     }
 
     const data = await response.json();
-    return data.data.user.repositories.nodes as GithubDataResponse;
-  } catch (error) {
-    console.error("Error:", error);
-    throw error;
+    const rep = data.data.user.repositories.nodes;
+
+    Notiflix.Notify.success(`Received ${rep.length} repositories from GitHub`);
+    return rep;
+  } catch (error: any) {
+    Notiflix.Notify.failure(`${error}`);
+    return [];
   }
 }
