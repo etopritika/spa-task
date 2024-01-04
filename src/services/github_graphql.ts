@@ -16,22 +16,23 @@ export async function fetchAllRepositories(
   token: string,
   username: string
 ): Promise<Repository[]> {
-  console.log(token)
+  console.log(token);
   const body = {
-    "query": `
-      query {
-        user(login: ${username}) {
-          repositories(first: 100) {
-            nodes {
-              id
-              nameWithOwner
-              description
-              url
-            }
+    query: `query GetAllRepositories($username: String!) {
+      user(login: $username) {
+        repositories(first: 100) {
+          nodes {
+            id
+            nameWithOwner
+            description
+            url
           }
         }
       }
-    `
+    }`,
+    variables: {
+      username: username,
+    },
   };
 
   const baseUrl = "https://api.github.com/graphql";
@@ -60,7 +61,9 @@ export async function fetchAllRepositories(
 
     const repositories = data.data.user.repositories.nodes;
 
-    Notiflix.Notify.success(`Received ${repositories.length} repositories from GitHub`);
+    Notiflix.Notify.success(
+      `Received ${repositories.length} repositories from GitHub`
+    );
     return repositories;
   } catch (error) {
     Notiflix.Notify.failure(`Error fetching repositories: ${error}`);
