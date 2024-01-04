@@ -1,5 +1,4 @@
 import React from "react";
-import Notiflix from "notiflix";
 import "./App.css";
 import { fetchAllRepositories } from "../../services/github_graphql";
 import type { Repository } from "../../types/repository";
