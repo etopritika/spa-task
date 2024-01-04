@@ -20,6 +20,7 @@ export async function fetchAllRepositories(
     }`,
     variables: {
       username: username,
+      token: token
     },
   };
 
