@@ -16,10 +16,11 @@ export async function fetchAllRepositories(
   token: string,
   username: string
 ): Promise<Repository[]> {
+  console.log(token)
   const body = {
-    query: `
-      query GetAllRepositories($username: String!) {
-        user(login: $username) {
+    "query": `
+      query {
+        user(login: ${username}) {
           repositories(first: 100) {
             nodes {
               id
@@ -30,10 +31,7 @@ export async function fetchAllRepositories(
           }
         }
       }
-    `,
-    variables: {
-      username: username,
-    },
+    `
   };
 
   const baseUrl = "https://api.github.com/graphql";
