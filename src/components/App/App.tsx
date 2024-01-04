@@ -4,7 +4,7 @@ import { fetchAllRepositories } from "../../services/github_graphql";
 import type { Repository } from "../../types/repository";
 import DropdownList from "../DropdownList/DropdownList";
 
-const GITHUB_TOKEN = "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";
+const GITHUB_TOKEN = "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";
 
 export function App() {
   const [repoList, setRepoList] = React.useState<Repository[]>([]);
