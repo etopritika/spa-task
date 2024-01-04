@@ -1,25 +1,24 @@
 import type { GithubDataResponse } from "./types";
 
-export async function fetchGithubData(
-  token: string
+export async function fetchAllRepositories(
+  token: string,
+  username: string
 ): Promise<GithubDataResponse> {
-  const githubData = {
-    token: token,
-    username: "etopritika",
-  };
-
   const body = {
-    query: `query GetRepository($owner: String!, $name: String!){
-          repository(owner: $owner, name: $name){
+    query: `query GetAllRepositories($username: String!){
+      user(login: $username) {
+        repositories(first: 100) {
+          nodes {
             id
             nameWithOwner
             description
             url
           }
-        }`,
+        }
+      }
+    }`,
     variables: {
-      owner: githubData.username,
-      name: "spa-task",
+      username: username,
     },
   };
 
@@ -27,7 +26,7 @@ export async function fetchGithubData(
 
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${githubData.token}`,
+    Authorization: `Bearer ${token}`,
   };
 
   try {
@@ -42,7 +41,7 @@ export async function fetchGithubData(
     }
 
     const data = await response.json();
-    return data.data as GithubDataResponse;
+    return data.data.user.repositories.nodes as GithubDataResponse;
   } catch (error) {
     console.error("Error:", error);
     throw error;

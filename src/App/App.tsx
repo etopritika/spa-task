@@ -1,19 +1,16 @@
 import React from "react";
 import "./App.css";
-import { fetchGithubData } from "../services/github_graphql";
+import { fetchAllRepositories } from "../services/github_graphql";
+
+const githubToken = process.env.REACT_APP_GITHUB_TOKEN;
 
 export function App() {
   React.useEffect(() => {
-    const githubToken = process.env.REACT_APP_GITHUB_TOKEN;
-
     if (githubToken) {
-      fetchGithubData(githubToken)
-        .then((data) => {
+      fetchAllRepositories(githubToken, "etopritika")
+        .then((data:any) => {
           console.log(data)
         })
-        .catch((error) => {
-        
-        });
     } else {
       console.error('GitHub token is not defined');
     }
