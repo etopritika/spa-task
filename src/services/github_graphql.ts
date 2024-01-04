@@ -1,26 +1,38 @@
 import Notiflix from "notiflix";
 import type { Repository } from "../types/repository";
 
+interface GraphQLResponse {
+  data: {
+    user: {
+      repositories: {
+        nodes: Repository[];
+      };
+    };
+  };
+  errors?: { message: string }[];
+}
+
 export async function fetchAllRepositories(
   token: string,
   username: string
 ): Promise<Repository[]> {
   const body = {
-    query: `query GetAllRepositories($username: String!){
-      user(login: $username) {
-        repositories(first: 100) {
-          nodes {
-            id
-            nameWithOwner
-            description
-            url
+    query: `
+      query GetAllRepositories($username: String!) {
+        user(login: $username) {
+          repositories(first: 100) {
+            nodes {
+              id
+              nameWithOwner
+              description
+              url
+            }
           }
         }
       }
-    }`,
+    `,
     variables: {
       username: username,
-      token: token
     },
   };
 
@@ -42,13 +54,18 @@ export async function fetchAllRepositories(
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const data = await response.json();
-    const rep = data.data.user.repositories.nodes;
+    const data: GraphQLResponse = await response.json();
 
-    Notiflix.Notify.success(`Received ${rep.length} repositories from GitHub`);
-    return rep;
-  } catch (error: any) {
-    Notiflix.Notify.failure(`${error}`);
+    if (data.errors) {
+      throw new Error(data.errors.map((error) => error.message).join("\n"));
+    }
+
+    const repositories = data.data.user.repositories.nodes;
+
+    Notiflix.Notify.success(`Received ${repositories.length} repositories from GitHub`);
+    return repositories;
+  } catch (error) {
+    Notiflix.Notify.failure(`Error fetching repositories: ${error}`);
     return [];
   }
 }
