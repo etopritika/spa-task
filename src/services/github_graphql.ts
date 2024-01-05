@@ -65,6 +65,7 @@ export async function fetchIssuesForRepository(repositoryFullName: string): Prom
 
     const simplifiedIssues: Issue[] = issues.map((issue: any) => {
       return {
+        id: issue.id,
         url: issue.url,
         title: issue.title,
         body: issue.body || "",
@@ -74,7 +75,6 @@ export async function fetchIssuesForRepository(repositoryFullName: string): Prom
 
     return simplifiedIssues;
   } catch (error) {
-    console.error("Error fetching issues:", error);
     Notiflix.Notify.failure(`Error fetching issues: ${error}`);
     return [];
   }

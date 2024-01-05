@@ -11,7 +11,6 @@ const App: React.FC = () => {
   const [issueList, setIssues] = React.useState<Issue[]>([]);
   const [isChosenRepo, setChose] = React.useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
-  console.log("isDropdownOpen: ", isDropdownOpen);
 
   React.useEffect(() => {
     fetchAllRepositories().then((data: Repository[]) => {

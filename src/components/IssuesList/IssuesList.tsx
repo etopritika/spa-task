@@ -7,10 +7,11 @@ interface IssueListProps {
 }
 
 const IssuesList: React.FC<IssueListProps> = ({ list }) => {
+
   return (
     <ul className="list_container">
-      {list.map(({ body, url, comments, title }) => (
-        <li className='list_item' key={title}>
+      {list.map(({ body, url, comments, title, id }) => (
+        <li className='list_item' key={id}>
           <p>
             <strong>Title:</strong> {title}
           </p>
