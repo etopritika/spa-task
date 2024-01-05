@@ -14,6 +14,17 @@ interface GraphQLResponse {
   errors?: { message: string }[];
 }
 
+// interface AddCommentResponse {
+//   addComment: {
+//     commentEdge: {
+//       node: {
+//         id: number;
+//         body: string;
+//       };
+//     };
+//   };
+// }
+
 export async function fetchAllRepositories(): Promise<Repository[]> {
   const { baseUrl, headers, fetchAllBody } = apiHelpers;
 
@@ -46,7 +57,9 @@ export async function fetchAllRepositories(): Promise<Repository[]> {
   }
 }
 
-export async function fetchIssuesForRepository(repositoryFullName: string): Promise<Issue[]> {
+export async function fetchIssuesForRepository(
+  repositoryFullName: string
+): Promise<Issue[]> {
   const { headers } = apiHelpers;
 
   const baseUrl = `https://api.github.com/repos/${repositoryFullName}/issues`;
@@ -77,5 +90,44 @@ export async function fetchIssuesForRepository(repositoryFullName: string): Prom
   } catch (error) {
     Notiflix.Notify.failure(`Error fetching issues: ${error}`);
     return [];
+  }
+}
+
+export async function addCommentToIssue(
+  issueId: number,
+  commentBody: string
+): Promise<void> {
+  const { headers, baseUrl } = apiHelpers;
+
+  const requestBody = {
+    query: `
+    mutation AddCommentToIssue {
+      addComment(input: {subjectId: "${issueId}", body: "${commentBody}"}) {
+        clientMutationId
+      }
+    }
+`
+  };
+
+  try {
+    const response = await fetch(baseUrl, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    if (responseData.errors) {
+      throw new Error(responseData.errors[0].message);
+    }
+
+    // Без повернення даних, оскільки ми робимо mutation, а не query
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    Notiflix.Notify.failure(`Error adding comment: ${error}`);
   }
 }

@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
+import { addCommentToIssue } from "../../services/github_graphql";
 
-const ModalContainer: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+interface ModalProps {
+  issueId: number;
+}
+
+const ModalContainer: React.FC<ModalProps> = ({ issueId }) => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [commentText, setCommentText] = useState<string>("");
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -10,6 +16,7 @@ const ModalContainer: React.FC = () => {
 
   const handleOk = () => {
     setIsModalOpen(false);
+    addCommentToIssue(issueId, commentText)
   };
 
   const handleCancel = () => {
@@ -39,6 +46,7 @@ const ModalContainer: React.FC = () => {
         <textarea
           name="Add a comment"
           id="Add a comment"
+          onChange={(e) => setCommentText(e.target.value)}
           style={{ width: "452px", resize: "none", padding: "10px" }}
           rows={10}
         ></textarea>

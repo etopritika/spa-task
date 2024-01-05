@@ -24,7 +24,7 @@ const IssuesList: React.FC<IssueListProps> = ({ list }) => {
           <p>
             <strong>URL:</strong> {url}
           </p>
-          <Modal />
+          <Modal issueId={id}/>
         </li>
       ))}
     </ul>
