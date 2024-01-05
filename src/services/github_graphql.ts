@@ -1,5 +1,6 @@
 import Notiflix from "notiflix";
 import type { Repository } from "../types/repository";
+import { apiHelpers } from "./helpers";
 
 interface GraphQLResponse {
   data: {
@@ -12,41 +13,15 @@ interface GraphQLResponse {
   errors?: { message: string }[];
 }
 
-export async function fetchAllRepositories(
-  token: string,
-  username: string
-): Promise<Repository[]> {
-  console.log(token);
-  const body = {
-    query: `query GetAllRepositories($username: String!) {
-      user(login: $username) {
-        repositories(first: 100) {
-          nodes {
-            id
-            nameWithOwner
-            description
-            url
-          }
-        }
-      }
-    }`,
-    variables: {
-      username: username,
-    },
-  };
+export async function fetchAllRepositories(): Promise<Repository[]> {
 
-  const baseUrl = "https://api.github.com/graphql";
-
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
+  const {baseUrl, headers, fetchAllBody} = apiHelpers;
 
   try {
     const response = await fetch(baseUrl, {
       method: "POST",
       headers: headers,
-      body: JSON.stringify(body),
+      body: JSON.stringify(fetchAllBody),
     });
 
     if (!response.ok) {
