@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./DropdownList.css";
 import { Select } from "antd";
 import type { Repository } from "../../types/repository";
 import type { Issue } from "../../types/issue";
@@ -41,6 +42,7 @@ const DropdownList: React.FC<DropdownListProps> = ({
 
   return (
     <Select
+      className="dropdown"
       mode="multiple"
       placeholder="Inserted are removed"
       value={selectedItems}

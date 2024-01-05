@@ -1,0 +1,13 @@
+.list_container {
+  display: flex;
+  font-size: 16px;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.list_item {
+  margin-bottom: 15px;
+  border: 1px solid white;
+  border-radius: 10px;
+  padding: 10px;
+}

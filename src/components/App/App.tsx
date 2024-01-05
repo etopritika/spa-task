@@ -9,9 +9,9 @@ import IssuesList from "../IssuesList/IssuesList";
 const App: React.FC = () => {
   const [repoList, setRepoList] = React.useState<Repository[]>([]);
   const [issueList, setIssues] = React.useState<Issue[]>([]);
-  const [isChosen, setChose] = React.useState<boolean>(false);
+  const [isChosenRepo, setChose] = React.useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
-  console.log("isDropdownOpen: ", isDropdownOpen)
+  console.log("isDropdownOpen: ", isDropdownOpen);
 
   React.useEffect(() => {
     fetchAllRepositories().then((data: Repository[]) => {
@@ -25,23 +25,28 @@ const App: React.FC = () => {
 
   const handleChooseRepo = (isChosen: boolean) => {
     setChose(isChosen);
-    if(!isChosen){
-      setIssues([])
+    if (!isChosen) {
+      setIssues([]);
     }
   };
 
   const handleOpen = (isOpen: boolean) => {
     setIsDropdownOpen(isOpen);
-  }
+  };
 
   let content;
 
   if (issueList.length > 0) {
     content = <IssuesList list={issueList} />;
-  } else if (issueList.length === 0 && isChosen) {
+  } else if (issueList.length === 0 && isChosenRepo) {
     content = <p>No issues available</p>;
   } else {
     content = <p>Chose repository</p>;
+  }
+
+  let contentClasses = "";
+  if (isDropdownOpen) {
+    contentClasses = "content-dropdown-open";
   }
 
   return (
@@ -52,7 +57,7 @@ const App: React.FC = () => {
         onChose={handleChooseRepo}
         onOpen={handleOpen}
       />
-      {content}
+      <div className={`content ${contentClasses}`}>{content}</div>
     </div>
   );
 };

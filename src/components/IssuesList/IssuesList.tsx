@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Issue } from '../../types/issue';
+import "./IssuesList.css"
 
 interface IssueListProps {
   list: Issue[];
@@ -7,9 +8,9 @@ interface IssueListProps {
 
 const IssuesList: React.FC<IssueListProps> = ({ list }) => {
   return (
-    <ul>
+    <ul className="list_container">
       {list.map(({ body, url, comments, title }) => (
-        <li key={title}>
+        <li className='list_item' key={title}>
           <p>
             <strong>Title:</strong> {title}
           </p>

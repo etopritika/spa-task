@@ -10,3 +10,12 @@
   padding-top: 40px;
 }
 
+.content {
+  transition: transform 0.3s ease-in-out; /* Додає плавний перехід */
+  background-color: #282c34;
+}
+
+.content-dropdown-open {
+  transform: translateY(270px); /* Рухає блок до низу (ви можете налаштувати потрібний вам offset) */
+}
+
