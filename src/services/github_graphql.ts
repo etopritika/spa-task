@@ -1,5 +1,6 @@
 import Notiflix from "notiflix";
 import type { Repository } from "../types/repository";
+import type { Issue } from "../types/issue";
 import { apiHelpers } from "./helpers";
 
 interface GraphQLResponse {
@@ -14,8 +15,7 @@ interface GraphQLResponse {
 }
 
 export async function fetchAllRepositories(): Promise<Repository[]> {
-
-  const {baseUrl, headers, fetchAllBody} = apiHelpers;
+  const { baseUrl, headers, fetchAllBody } = apiHelpers;
 
   try {
     const response = await fetch(baseUrl, {
@@ -42,6 +42,40 @@ export async function fetchAllRepositories(): Promise<Repository[]> {
     return repositories;
   } catch (error) {
     Notiflix.Notify.failure(`Error fetching repositories: ${error}`);
+    return [];
+  }
+}
+
+export async function fetchIssuesForRepository(repositoryFullName: string): Promise<Issue[]> {
+  const { headers } = apiHelpers;
+
+  const baseUrl = `https://api.github.com/repos/${repositoryFullName}/issues`;
+
+  try {
+    const response = await fetch(baseUrl, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const issues = await response.json();
+
+    const simplifiedIssues: Issue[] = issues.map((issue: any) => {
+      return {
+        url: issue.url,
+        title: issue.title,
+        body: issue.body || "",
+        comments: issue.comments,
+      };
+    });
+
+    return simplifiedIssues;
+  } catch (error) {
+    console.error("Error fetching issues:", error);
+    Notiflix.Notify.failure(`Error fetching issues: ${error}`);
     return [];
   }
 }
