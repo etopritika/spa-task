@@ -18,7 +18,9 @@ export async function fetchAllRepositories(): Promise<Repository[]> {
       body: JSON.stringify(fetchAllBody),
     });
 
-    const data: GraphQLResponse<{ user: { repositories: { nodes: Repository[] } } }> = await response.json();
+    const data: GraphQLResponse<{
+      user: { repositories: { nodes: Repository[] } };
+    }> = await response.json();
 
     if (!response.ok || data.errors) {
       const errorMessage = data.errors
@@ -29,7 +31,9 @@ export async function fetchAllRepositories(): Promise<Repository[]> {
 
     const repositories = data.data?.user?.repositories?.nodes || [];
 
-    Notiflix.Notify.success(`Received ${repositories.length} repositories from GitHub`);
+    Notiflix.Notify.success(
+      `Received ${repositories.length} repositories from GitHub`
+    );
     return repositories;
   } catch (error) {
     Notiflix.Notify.failure(`Error fetching repositories: ${error}`);
@@ -37,7 +41,9 @@ export async function fetchAllRepositories(): Promise<Repository[]> {
   }
 }
 
-export async function fetchIssuesForRepository(repositoryFullName: string): Promise<Issue[]> {
+export async function fetchIssuesForRepository(
+  repositoryFullName: string
+): Promise<Issue[]> {
   const { headers } = apiHelpers;
   const baseUrl = `https://api.github.com/repos/${repositoryFullName}/issues`;
 
@@ -68,7 +74,10 @@ export async function fetchIssuesForRepository(repositoryFullName: string): Prom
   }
 }
 
-export async function addCommentToIssue(issueId: number, commentBody: string): Promise<void> {
+export async function addCommentToIssue(
+  issueId: number,
+  commentBody: string
+): Promise<void> {
   const { headers, baseUrl } = apiHelpers;
 
   const requestBody = {
@@ -93,7 +102,9 @@ export async function addCommentToIssue(issueId: number, commentBody: string): P
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const responseData: GraphQLResponse<{ addComment: { clientMutationId: string } }> = await response.json();
+    const responseData: GraphQLResponse<{
+      addComment: { clientMutationId: string };
+    }> = await response.json();
 
     if (responseData.errors) {
       throw new Error(responseData.errors[0].message);

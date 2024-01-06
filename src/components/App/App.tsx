@@ -36,12 +36,12 @@ const App: React.FC = () => {
 
   const handleRepoName = (repoName: string) => {
     setRepositoryName(repoName);
-  }
+  };
 
   let content;
 
   if (issueList.length > 0) {
-    content = <IssuesList list={issueList} repoName={repositoryName}/>;
+    content = <IssuesList list={issueList} repoName={repositoryName} />;
   } else if (issueList.length === 0 && isChosenRepo) {
     content = <p>No issues available</p>;
   } else {

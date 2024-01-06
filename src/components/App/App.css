@@ -16,6 +16,7 @@
 }
 
 .content-dropdown-open {
-  transform: translateY(270px); /* Рухає блок до низу (ви можете налаштувати потрібний вам offset) */
+  transform: translateY(
+    270px
+  ); /* Рухає блок до низу (ви можете налаштувати потрібний вам offset) */
 }
-
