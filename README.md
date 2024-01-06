@@ -1,26 +1,34 @@
--GitHub Issue Tracker Project
+Absolutely! Here's a polished version for your README.md:
 
--Overview:
-    The GitHub Issue Tracker project is designed to track and manage tasks within a GitHub repository. It enables users to view, add, and handle issues using the GitHub GraphQL API.
-    To work with the tracker, add your github token to the .env file.
+---
 
--Functionality:
-    Repository Loading: The project allows users to load their repositories from GitHub using GraphQL.
+# GitHub Issue Tracker Project
 
-    Fetching Issues for a Repository: Users can retrieve a list of issues for a specific repository using the GitHub API.
+## Overview
 
-    Adding Comments: It includes the capability to add comments to individual issues.
+The GitHub Issue Tracker project is a comprehensive solution for managing tasks within a GitHub repository. It empowers users to seamlessly view, add, and handle issues leveraging the GitHub GraphQL API. To use this tracker, add your GitHub token to the .env file.
 
--Project Structure:
-    src/: Application code
-    components/: React components
-    services/: Services for API interaction
-    types/: Data types and interfaces
+## Functionality
 
--Technologies Used:
-    React.js
-    GraphQL
-    Ant Design
+- **Repository Loading:** Load repositories from GitHub using GraphQL.
+- **Fetching Issues for a Repository:** Retrieve a list of issues for a specific repository using the GitHub API.
+- **Adding Comments:** Easily add comments to individual issues.
 
--Author:
-    Dmitriy Prytyka
+## Project Structure
+
+- **src/:** Application code
+  - **components/:** React components
+  - **services/:** Services for API interaction
+  - **types/:** Data types and interfaces
+
+## Technologies Used
+
+- React.js
+- GraphQL
+- Ant Design
+
+## Author
+
+Dmitriy Prytyka
+
+---
