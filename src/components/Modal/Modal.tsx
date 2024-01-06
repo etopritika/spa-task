@@ -1,12 +1,20 @@
 import React, { useState } from "react";
 import { Button, Modal } from "antd";
 import { addCommentToIssue } from "../../services/github_graphql";
+import { fetchIssuesForRepository } from "../../services/github_graphql";
+import type { Issue } from "../../types/issue";
 
 interface ModalProps {
   issueId: number;
+  repoName: string;
+  handleIssues: (issues: Issue[]) => void;
 }
 
-const ModalContainer: React.FC<ModalProps> = ({ issueId }) => {
+const ModalContainer: React.FC<ModalProps> = ({
+  issueId,
+  repoName,
+  handleIssues,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [commentText, setCommentText] = useState<string>("");
 
@@ -14,9 +22,11 @@ const ModalContainer: React.FC<ModalProps> = ({ issueId }) => {
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
+  const handleOk = async () => {
     setIsModalOpen(false);
-    addCommentToIssue(issueId, commentText)
+    await addCommentToIssue(issueId, commentText);
+    const issues = await fetchIssuesForRepository(repoName);
+    handleIssues(issues);
   };
 
   const handleCancel = () => {

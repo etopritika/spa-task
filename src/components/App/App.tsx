@@ -10,7 +10,8 @@ const App: React.FC = () => {
   const [repoList, setRepoList] = React.useState<Repository[]>([]);
   const [issueList, setIssues] = React.useState<Issue[]>([]);
   const [isChosenRepo, setChose] = React.useState<boolean>(false);
-  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = React.useState<boolean>(false);
+  const [repositoryName, setRepositoryName] = React.useState<string>("");
 
   React.useEffect(() => {
     fetchAllRepositories().then((data: Repository[]) => {
@@ -33,10 +34,14 @@ const App: React.FC = () => {
     setIsDropdownOpen(isOpen);
   };
 
+  const handleRepoName = (repoName: string) => {
+    setRepositoryName(repoName);
+  }
+
   let content;
 
   if (issueList.length > 0) {
-    content = <IssuesList list={issueList} />;
+    content = <IssuesList list={issueList} repoName={repositoryName}/>;
   } else if (issueList.length === 0 && isChosenRepo) {
     content = <p>No issues available</p>;
   } else {
@@ -55,6 +60,7 @@ const App: React.FC = () => {
         onIssuesChange={handleIssuesChange}
         onChose={handleChooseRepo}
         onOpen={handleOpen}
+        repoName={handleRepoName}
       />
       <div className={`content ${contentClasses}`}>{content}</div>
     </div>

@@ -10,6 +10,7 @@ interface DropdownListProps {
   onIssuesChange: (newIssues: Issue[]) => void;
   onChose: (isChosen: boolean) => void;
   onOpen: (isOpen: boolean) => void;
+  repoName: (repoName: string) => void;
 }
 
 const DropdownList: React.FC<DropdownListProps> = ({
@@ -17,6 +18,7 @@ const DropdownList: React.FC<DropdownListProps> = ({
   onIssuesChange,
   onChose,
   onOpen,
+  repoName,
 }) => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
@@ -34,6 +36,7 @@ const DropdownList: React.FC<DropdownListProps> = ({
     if (selectedItem.length > 0) {
       const repositoryName = selectedItem[selectedItem.length - 1];
       fetchIssues(repositoryName);
+      repoName(repositoryName);
       onChose(true);
     } else {
       onChose(false);

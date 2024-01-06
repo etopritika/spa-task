@@ -5,12 +5,19 @@ import Modal from "../Modal/Modal";
 
 interface IssueListProps {
   list: Issue[];
+  repoName: string;
 }
 
-const IssuesList: React.FC<IssueListProps> = ({ list }) => {
+const IssuesList: React.FC<IssueListProps> = ({ list, repoName }) => {
+  const [issueList, setIssueList] = React.useState<Issue[]>([...list]);
+
+  const handleIssues = (issues: Issue[]) => {
+    setIssueList([...issues]);
+  };
+
   return (
     <ul className="list_container">
-      {list.map(({ body, url, comments, title, id }) => (
+      {issueList.map(({ body, url, comments, title, id }) => (
         <li className="list_item" key={id}>
           <p>
             <strong>Title:</strong> {title}
@@ -24,7 +31,7 @@ const IssuesList: React.FC<IssueListProps> = ({ list }) => {
           <p>
             <strong>URL:</strong> {url}
           </p>
-          <Modal issueId={id}/>
+          <Modal issueId={id} repoName={repoName} handleIssues={handleIssues} />
         </li>
       ))}
     </ul>

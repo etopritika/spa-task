@@ -3,27 +3,10 @@ import type { Repository } from "../types/repository";
 import type { Issue } from "../types/issue";
 import { apiHelpers } from "./helpers";
 
-interface GraphQLResponse {
-  data: {
-    user: {
-      repositories: {
-        nodes: Repository[];
-      };
-    };
-  };
+interface GraphQLResponse<T> {
+  data?: T;
   errors?: { message: string }[];
 }
-
-// interface AddCommentResponse {
-//   addComment: {
-//     commentEdge: {
-//       node: {
-//         id: number;
-//         body: string;
-//       };
-//     };
-//   };
-// }
 
 export async function fetchAllRepositories(): Promise<Repository[]> {
   const { baseUrl, headers, fetchAllBody } = apiHelpers;
@@ -35,21 +18,18 @@ export async function fetchAllRepositories(): Promise<Repository[]> {
       body: JSON.stringify(fetchAllBody),
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+    const data: GraphQLResponse<{ user: { repositories: { nodes: Repository[] } } }> = await response.json();
+
+    if (!response.ok || data.errors) {
+      const errorMessage = data.errors
+        ? data.errors[0].message
+        : `HTTP error! Status: ${response.status}`;
+      throw new Error(errorMessage);
     }
 
-    const data: GraphQLResponse = await response.json();
+    const repositories = data.data?.user?.repositories?.nodes || [];
 
-    if (data.errors) {
-      throw new Error(data.errors.map((error) => error.message).join("\n"));
-    }
-
-    const repositories = data.data.user.repositories.nodes;
-
-    Notiflix.Notify.success(
-      `Received ${repositories.length} repositories from GitHub`
-    );
+    Notiflix.Notify.success(`Received ${repositories.length} repositories from GitHub`);
     return repositories;
   } catch (error) {
     Notiflix.Notify.failure(`Error fetching repositories: ${error}`);
@@ -57,11 +37,8 @@ export async function fetchAllRepositories(): Promise<Repository[]> {
   }
 }
 
-export async function fetchIssuesForRepository(
-  repositoryFullName: string
-): Promise<Issue[]> {
+export async function fetchIssuesForRepository(repositoryFullName: string): Promise<Issue[]> {
   const { headers } = apiHelpers;
-
   const baseUrl = `https://api.github.com/repos/${repositoryFullName}/issues`;
 
   try {
@@ -70,21 +47,19 @@ export async function fetchIssuesForRepository(
       headers: headers,
     });
 
+    const issues = await response.json();
+
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const issues = await response.json();
-
-    const simplifiedIssues: Issue[] = issues.map((issue: any) => {
-      return {
-        id: issue.id,
-        url: issue.url,
-        title: issue.title,
-        body: issue.body || "",
-        comments: issue.comments,
-      };
-    });
+    const simplifiedIssues: Issue[] = issues.map((issue: any) => ({
+      id: issue.node_id,
+      url: issue.url,
+      title: issue.title,
+      body: issue.body || "",
+      comments: issue.comments,
+    }));
 
     return simplifiedIssues;
   } catch (error) {
@@ -93,20 +68,18 @@ export async function fetchIssuesForRepository(
   }
 }
 
-export async function addCommentToIssue(
-  issueId: number,
-  commentBody: string
-): Promise<void> {
+export async function addCommentToIssue(issueId: number, commentBody: string): Promise<void> {
   const { headers, baseUrl } = apiHelpers;
 
   const requestBody = {
     query: `
-    mutation AddCommentToIssue {
-      addComment(input: {subjectId: "${issueId}", body: "${commentBody}"}) {
-        clientMutationId
+      mutation AddCommentToIssue($issueId: ID!, $commentBody: String!) {
+        addComment(input: {subjectId: $issueId, body: $commentBody}) {
+          clientMutationId
+        }
       }
-    }
-`
+    `,
+    variables: { issueId, commentBody },
   };
 
   try {
@@ -120,12 +93,13 @@ export async function addCommentToIssue(
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const responseData = await response.json();
+    const responseData: GraphQLResponse<{ addComment: { clientMutationId: string } }> = await response.json();
+
     if (responseData.errors) {
       throw new Error(responseData.errors[0].message);
     }
 
-    // Без повернення даних, оскільки ми робимо mutation, а не query
+    Notiflix.Notify.success("Comment added successfully");
   } catch (error) {
     console.error("Error adding comment:", error);
     Notiflix.Notify.failure(`Error adding comment: ${error}`);
