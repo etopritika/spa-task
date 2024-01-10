@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-import { Card, List } from "antd";
+import { Card, List, Dropdown, Space } from "antd";
+import { DownOutlined } from "@ant-design/icons";
+import type { MenuProps } from "antd";
 import Modal from "../Modal/Modal";
 
 import type { Issue } from "../../types/types";
+import { fetchIssueWithComments } from "../../services/github_graphql";
 import "./IssuesList.css";
 
 interface IssueListProps {
@@ -12,20 +15,31 @@ interface IssueListProps {
 }
 
 const IssuesList: React.FC<IssueListProps> = ({ list, repoName }) => {
-  const [issueList, setIssueList] = React.useState<Issue[]>([...list]);
+  const [issueList, setIssueList] = useState<Issue[]>([...list]);
+  const [commentList, setCommentlist] = useState<MenuProps["items"]>([]);
 
   const handleIssues = (issues: Issue[]) => {
     setIssueList([...issues]);
   };
 
-  React.useEffect(() => {
+  const handleComments = async (issueNumber: number) => {
+    const repoComments = await fetchIssueWithComments(repoName, issueNumber);
+
+    const editedComments = repoComments.map((comment, index) => ({
+      label: comment.body || "",
+      key: index.toString(),
+    }));
+
+    setCommentlist([...editedComments]);
+  };
+
+  useEffect(() => {
     setIssueList(list);
   }, [list]);
 
   return (
     <List
       grid={{
-        column: 2,
         gutter: 16,
         xs: 1,
         sm: 1,
@@ -35,29 +49,30 @@ const IssuesList: React.FC<IssueListProps> = ({ list, repoName }) => {
         xxl: 1,
       }}
       dataSource={issueList}
-      renderItem={({ body, url, comments, title, id }) => (
-        <List.Item>
-          <Card title={title}>
-            <p>
-              <strong>Body:</strong> {body}
-            </p>
-            <p>
-              <strong>Comments:</strong> {comments}
-            </p>
-            <p>
-              <strong>URL:</strong> {url}
-            </p>
-            <Modal
-              issueId={id}
-              repoName={repoName}
-              handleIssues={handleIssues}
-            />
-          </Card>
-        </List.Item>
+      renderItem={({ body, url, comments, title, id, number }) => (
+        <Card title={title} className="card">
+          <p>
+            <strong>Body:</strong> {body}
+          </p>
+          <p>
+            <strong>Comments:</strong> {comments}
+          </p>
+          <p>
+            <strong>URL:</strong> {url}
+          </p>
+          <Modal issueId={id} repoName={repoName} handleIssues={handleIssues} />
+          <Dropdown menu={{}} trigger={["click"]}>
+            <button onClick={() => handleComments(number)}>
+              <Space>
+                Show comments
+                <DownOutlined />
+              </Space>
+            </button>
+          </Dropdown>
+        </Card>
       )}
     />
   );
 };
 
 export default IssuesList;
-

@@ -43,7 +43,7 @@ const ModalContainer: React.FC<ModalProps> = ({
     <>
       <Button
         style={{
-          margin: "20px 0 0 0",
+          margin: "20px 0",
         }}
         type="primary"
         onClick={showModal}

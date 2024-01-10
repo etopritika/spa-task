@@ -11,4 +11,5 @@ export type Issue = {
   title: string;
   body: string | null;
   comments: number;
+  number: number;
 };

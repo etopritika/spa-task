@@ -3,16 +3,8 @@ export interface GraphQLResponse<T> {
   errors?: { message: string }[];
 }
 
-interface Comment {
+export interface Comment {
   id: string;
   body: string;
 }
 
-export interface IssueWithComments {
-  id: string;
-  title: string;
-  body: string;
-  comments: {
-    nodes: Comment[];
-  };
-}

@@ -1,9 +1,10 @@
 import Notiflix from "notiflix";
 
 import type { Repository, Issue } from "../types/types";
-import type { GraphQLResponse, IssueWithComments } from "./types";
+import type { GraphQLResponse, Comment } from "./types";
 
 import { apiHelpers } from "./helpers";
+
 
 export async function fetchAllRepositories(): Promise<Repository[]> {
   const { baseUrl, headers, fetchAllBody } = apiHelpers;
@@ -38,6 +39,7 @@ export async function fetchAllRepositories(): Promise<Repository[]> {
   }
 }
 
+
 export async function fetchIssuesForRepository(
   repositoryFullName: string
 ): Promise<Issue[]> {
@@ -56,14 +58,15 @@ export async function fetchIssuesForRepository(
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    console.log("fetchIssuesForRepository: ",issues)
+    const filteredIssues = issues.filter((issue: { pull_request: any }) => !issue.pull_request);
 
-    const simplifiedIssues: Issue[] = issues.map((issue: any) => ({
+    const simplifiedIssues: Issue[] = filteredIssues.map((issue: any) => ({
       id: issue.node_id,
       url: issue.url,
       title: issue.title,
       body: issue.body || "",
       comments: issue.comments,
+      number: issue.number,
     }));
 
     return simplifiedIssues;
@@ -72,6 +75,7 @@ export async function fetchIssuesForRepository(
     return [];
   }
 }
+
 
 export async function addCommentToIssue(
   issueId: number,
@@ -119,7 +123,7 @@ export async function addCommentToIssue(
 export async function fetchIssueWithComments(
   repositoryFullName: string,
   issueNumber: number
-): Promise<IssueWithComments | null> {
+): Promise<Comment[]> {
   const { baseUrl, headers } = apiHelpers;
 
   const owner = repositoryFullName.split("/")[0];
@@ -167,15 +171,11 @@ export async function fetchIssueWithComments(
       throw new Error(`${data.errors[0]?.message}`);
     }
 
-    const issue = data;
+    const comments = data.data?.repository?.issue?.comments?.nodes;
 
-    console.log("fetchIssueWithComments: ",issue)
-
-    return issue;
+    return comments;
   } catch (error) {
     console.error("Error fetching issue with comments.", error);
-    return null;
+    return [];
   }
 }
-
-fetchIssueWithComments("etopritika/team-project-12", 62)

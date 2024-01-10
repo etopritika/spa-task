@@ -7,7 +7,7 @@
   justify-content: flex-start;
   font-size: calc(10px + 2vmin);
   color: white;
-  padding-top: 40px;
+  padding: 40px 25px 0 25px;
 }
 
 .content {
