@@ -47,15 +47,15 @@ const IssuesList: React.FC<IssueListProps> = ({ list, repoName }) => {
 
   return (
     <List
-      grid={{
-        gutter: 16,
-        xs: 1,
-        sm: 1,
-        md: 1,
-        lg: 1,
-        xl: 1,
-        xxl: 1,
-      }}
+      // grid={{
+      //   gutter: 16,
+      //   xs: 1,
+      //   sm: 1,
+      //   md: 1,
+      //   lg: 1,
+      //   xl: 1,
+      //   xxl: 1,
+      // }}
       dataSource={issueList}
       renderItem={({ body, url, comments, title, id, number }) => (
         <Card title={title} className="card">
