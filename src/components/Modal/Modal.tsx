@@ -1,8 +1,13 @@
 import React, { useState } from "react";
+
 import { Button, Modal } from "antd";
+import { Input } from 'antd';
+
 import { addCommentToIssue } from "../../services/github_graphql";
 import { fetchIssuesForRepository } from "../../services/github_graphql";
-import type { Issue } from "../../types/issue";
+import type { Issue } from "../../types/types";
+
+const { TextArea } = Input;
 
 interface ModalProps {
   issueId: number;
@@ -27,6 +32,7 @@ const ModalContainer: React.FC<ModalProps> = ({
     await addCommentToIssue(issueId, commentText);
     const issues = await fetchIssuesForRepository(repoName);
     handleIssues(issues);
+    setCommentText("");
   };
 
   const handleCancel = () => {
@@ -37,10 +43,7 @@ const ModalContainer: React.FC<ModalProps> = ({
     <>
       <Button
         style={{
-          position: "absolute",
-          right: "20px",
-          top: "50%",
-          transform: "translateY(-50%)",
+          margin: "20px 0 0 0",
         }}
         type="primary"
         onClick={showModal}
@@ -53,13 +56,7 @@ const ModalContainer: React.FC<ModalProps> = ({
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <textarea
-          name="Add a comment"
-          id="Add a comment"
-          onChange={(e) => setCommentText(e.target.value)}
-          style={{ width: "452px", resize: "none", padding: "10px" }}
-          rows={10}
-        ></textarea>
+        <TextArea name="Add a comment" value={commentText} onChange={(e) => setCommentText(e.target.value)} style={{ resize: "none" }}  rows={10} placeholder="Text..." maxLength={500}/>
       </Modal>
     </>
   );

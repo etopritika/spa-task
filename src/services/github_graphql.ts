@@ -1,12 +1,9 @@
 import Notiflix from "notiflix";
-import type { Repository } from "../types/repository";
-import type { Issue } from "../types/issue";
-import { apiHelpers } from "./helpers";
 
-interface GraphQLResponse<T> {
-  data?: T;
-  errors?: { message: string }[];
-}
+import type { Repository, Issue } from "../types/types";
+import type { GraphQLResponse, IssueWithComments } from "./types";
+
+import { apiHelpers } from "./helpers";
 
 export async function fetchAllRepositories(): Promise<Repository[]> {
   const { baseUrl, headers, fetchAllBody } = apiHelpers;
@@ -58,6 +55,8 @@ export async function fetchIssuesForRepository(
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
+
+    console.log("fetchIssuesForRepository: ",issues)
 
     const simplifiedIssues: Issue[] = issues.map((issue: any) => ({
       id: issue.node_id,
@@ -116,3 +115,67 @@ export async function addCommentToIssue(
     Notiflix.Notify.failure(`Error adding comment: ${error}`);
   }
 }
+
+export async function fetchIssueWithComments(
+  repositoryFullName: string,
+  issueNumber: number
+): Promise<IssueWithComments | null> {
+  const { baseUrl, headers } = apiHelpers;
+
+  const owner = repositoryFullName.split("/")[0];
+  const repo = repositoryFullName.split("/")[1];
+
+  const requestBody = {
+    query: `
+      query GetIssueWithComments($owner: String!, $repo: String!, $issueNumber: Int!) {
+        repository(owner: $owner, name: $repo) {
+          issue(number: $issueNumber) {
+            id
+            title
+            body
+            comments(last: 10) {
+              nodes {
+                id
+                body
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: {
+      owner,
+      repo,
+      issueNumber,
+    },
+  };
+
+  try {
+    const response = await fetch(baseUrl, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.errors) {
+      throw new Error(`${data.errors[0]?.message}`);
+    }
+
+    const issue = data;
+
+    console.log("fetchIssueWithComments: ",issue)
+
+    return issue;
+  } catch (error) {
+    console.error("Error fetching issue with comments.", error);
+    return null;
+  }
+}
+
+fetchIssueWithComments("etopritika/team-project-12", 62)

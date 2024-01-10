@@ -1,10 +1,13 @@
 import React from "react";
-import "./App.css";
-import { fetchAllRepositories } from "../../services/github_graphql";
-import type { Repository } from "../../types/repository";
-import type { Issue } from "../../types/issue";
+
+import type { Repository, Issue } from "../../types/types";
+
 import DropdownList from "../DropdownList/DropdownList";
 import IssuesList from "../IssuesList/IssuesList";
+
+import { fetchAllRepositories } from "../../services/github_graphql";
+
+import "./App.css";
 
 const App: React.FC = () => {
   const [repoList, setRepoList] = React.useState<Repository[]>([]);

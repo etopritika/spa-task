@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import "./DropdownList.css";
+
 import { Select } from "antd";
-import type { Repository } from "../../types/repository";
-import type { Issue } from "../../types/issue";
+
+import type { Repository, Issue } from "../../types/types";
 import { fetchIssuesForRepository } from "../../services/github_graphql";
+
+import "./DropdownList.css";
 
 interface DropdownListProps {
   list: Repository[];
