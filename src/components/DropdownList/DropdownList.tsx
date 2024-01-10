@@ -5,7 +5,6 @@ import { Select } from "antd";
 import type { Repository, Issue } from "../../types/types";
 import { fetchIssuesForRepository } from "../../services/github_graphql";
 
-import "./DropdownList.css";
 
 interface DropdownListProps {
   list: Repository[];
@@ -47,7 +46,7 @@ const DropdownList: React.FC<DropdownListProps> = ({
 
   return (
     <Select
-      className="dropdown"
+      style={{marginBottom: "10px", width: "calc(100% / 1.5)"}}
       mode="multiple"
       placeholder="Inserted are removed"
       value={selectedItems}
