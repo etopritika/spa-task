@@ -53,7 +53,6 @@ const DropdownList: React.FC<DropdownListProps> = ({
       value={selectedItems}
       onChange={handleRepositorySelection}
       onDropdownVisibleChange={(isOpen) => onOpen(isOpen)}
-      style={{ width: "calc(100% / 1.5)" }}
       options={filteredOptions.map((item) => ({
         value: item.nameWithOwner,
         label: item.nameWithOwner,

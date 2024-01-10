@@ -1,6 +1,8 @@
-.card {
+.content {
   width: calc(100% / 1.5);
-  margin: 0 auto;
+}
+
+.card {
   overflow: hidden;
   margin-bottom: 15px;
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { Card, List, Dropdown, Space } from "antd";
+import { Card, List, Dropdown, Space, Button } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import Modal from "../Modal/Modal";
@@ -18,12 +18,20 @@ const IssuesList: React.FC<IssueListProps> = ({ list, repoName }) => {
   const [issueList, setIssueList] = useState<Issue[]>([...list]);
   const [commentList, setCommentlist] = useState<MenuProps["items"]>([]);
 
+  let items:MenuProps['items'] = commentList;
+
   const handleIssues = (issues: Issue[]) => {
     setIssueList([...issues]);
   };
 
   const handleComments = async (issueNumber: number) => {
+    setCommentlist([])
     const repoComments = await fetchIssueWithComments(repoName, issueNumber);
+
+    if(repoComments.length === 0){
+      setCommentlist([{label: "No comments here", key: "0"}])
+      return;
+    }
 
     const editedComments = repoComments.map((comment, index) => ({
       label: comment.body || "",
@@ -61,13 +69,13 @@ const IssuesList: React.FC<IssueListProps> = ({ list, repoName }) => {
             <strong>URL:</strong> {url}
           </p>
           <Modal issueId={id} repoName={repoName} handleIssues={handleIssues} />
-          <Dropdown menu={{}} trigger={["click"]}>
-            <button onClick={() => handleComments(number)}>
+          <Dropdown menu={{items}} trigger={["click"]}>
+            <Button type="primary" onClick={() => handleComments(number)}>
               <Space>
                 Show comments
                 <DownOutlined />
               </Space>
-            </button>
+            </Button>
           </Dropdown>
         </Card>
       )}
