@@ -1,7 +1,7 @@
 import Notiflix from "notiflix";
 
 import type { Repository, Issue } from "../types/types";
-import type { GraphQLResponse, Comment } from "./types";
+import type { GraphQLResponse, Comment } from "../types/types";
 
 import { apiHelpers } from "./helpers";
 

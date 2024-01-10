@@ -15,26 +15,28 @@ interface IssueListProps {
 type Comments = {
   label: string;
   key: number;
-}
+};
 
 const IssuesList: React.FC<IssueListProps> = ({ list, repoName }) => {
   const [issueList, setIssueList] = useState<Issue[]>([...list]);
   const [commentList, setCommentlist] = useState<Comments[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<number | null>(null);
 
-  const handleIssues = (issues: Issue[]) => {
-    setIssueList([...issues]);
-  };
+  const handleCommentList = (list: Issue[]) => {
+    setIssueList([...list])
+  }
 
   const handleComments = async (issueNumber: number) => {
     if (selectedIssue !== issueNumber) {
       setCommentlist([]);
       setSelectedIssue(issueNumber);
+
       const repoComments = await fetchIssueWithComments(repoName, issueNumber);
       const editedComments = repoComments.map((comment, index) => ({
         label: comment.body || "",
         key: index,
       }));
+
       setCommentlist([...editedComments]);
     } else {
       setSelectedIssue(null);
@@ -59,14 +61,16 @@ const IssuesList: React.FC<IssueListProps> = ({ list, repoName }) => {
           <p>
             <strong>URL:</strong> {url}
           </p>
-          <Modal issueId={id} repoName={repoName} handleIssues={handleIssues} />
+          <Modal issueId={id} repoName={repoName} handleCommentList={handleCommentList}/>
           <Button onClick={() => handleComments(number)}>Show Comments</Button>
 
           {selectedIssue === number && (
             <List
               dataSource={commentList}
               renderItem={(comment: any) => (
-                <List.Item>{comment.key + 1}: {comment.label}</List.Item>
+                <List.Item>
+                  {comment.key + 1}: {comment.label}
+                </List.Item>
               )}
             />
           )}
