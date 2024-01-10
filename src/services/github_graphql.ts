@@ -5,7 +5,6 @@ import type { GraphQLResponse, Comment } from "./types";
 
 import { apiHelpers } from "./helpers";
 
-
 export async function fetchAllRepositories(): Promise<Repository[]> {
   const { baseUrl, headers, fetchAllBody } = apiHelpers;
 
@@ -39,7 +38,6 @@ export async function fetchAllRepositories(): Promise<Repository[]> {
   }
 }
 
-
 export async function fetchIssuesForRepository(
   repositoryFullName: string
 ): Promise<Issue[]> {
@@ -58,7 +56,9 @@ export async function fetchIssuesForRepository(
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const filteredIssues = issues.filter((issue: { pull_request: any }) => !issue.pull_request);
+    const filteredIssues = issues.filter(
+      (issue: { pull_request: any }) => !issue.pull_request
+    );
 
     const simplifiedIssues: Issue[] = filteredIssues.map((issue: any) => ({
       id: issue.node_id,
@@ -75,7 +75,6 @@ export async function fetchIssuesForRepository(
     return [];
   }
 }
-
 
 export async function addCommentToIssue(
   issueId: number,

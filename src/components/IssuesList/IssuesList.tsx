@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { Card, List, Dropdown, Space, Button } from "antd";
-import { DownOutlined } from "@ant-design/icons";
-import type { MenuProps } from "antd";
+import { Card, List, Button } from "antd";
 import Modal from "../Modal/Modal";
 
 import type { Issue } from "../../types/types";
@@ -14,31 +12,33 @@ interface IssueListProps {
   repoName: string;
 }
 
+type Comments = {
+  label: string;
+  key: number;
+}
+
 const IssuesList: React.FC<IssueListProps> = ({ list, repoName }) => {
   const [issueList, setIssueList] = useState<Issue[]>([...list]);
-  const [commentList, setCommentlist] = useState<MenuProps["items"]>([]);
-
-  let items:MenuProps['items'] = commentList;
+  const [commentList, setCommentlist] = useState<Comments[]>([]);
+  const [selectedIssue, setSelectedIssue] = useState<number | null>(null);
 
   const handleIssues = (issues: Issue[]) => {
     setIssueList([...issues]);
   };
 
   const handleComments = async (issueNumber: number) => {
-    setCommentlist([])
-    const repoComments = await fetchIssueWithComments(repoName, issueNumber);
-
-    if(repoComments.length === 0){
-      setCommentlist([{label: "No comments here", key: "0"}])
-      return;
+    if (selectedIssue !== issueNumber) {
+      setCommentlist([]);
+      setSelectedIssue(issueNumber);
+      const repoComments = await fetchIssueWithComments(repoName, issueNumber);
+      const editedComments = repoComments.map((comment, index) => ({
+        label: comment.body || "",
+        key: index,
+      }));
+      setCommentlist([...editedComments]);
+    } else {
+      setSelectedIssue(null);
     }
-
-    const editedComments = repoComments.map((comment, index) => ({
-      label: comment.body || "",
-      key: index.toString(),
-    }));
-
-    setCommentlist([...editedComments]);
   };
 
   useEffect(() => {
@@ -47,15 +47,6 @@ const IssuesList: React.FC<IssueListProps> = ({ list, repoName }) => {
 
   return (
     <List
-      // grid={{
-      //   gutter: 16,
-      //   xs: 1,
-      //   sm: 1,
-      //   md: 1,
-      //   lg: 1,
-      //   xl: 1,
-      //   xxl: 1,
-      // }}
       dataSource={issueList}
       renderItem={({ body, url, comments, title, id, number }) => (
         <Card title={title} className="card">
@@ -69,14 +60,16 @@ const IssuesList: React.FC<IssueListProps> = ({ list, repoName }) => {
             <strong>URL:</strong> {url}
           </p>
           <Modal issueId={id} repoName={repoName} handleIssues={handleIssues} />
-          <Dropdown menu={{items}} trigger={["click"]}>
-            <Button type="primary" onClick={() => handleComments(number)}>
-              <Space>
-                Show comments
-                <DownOutlined />
-              </Space>
-            </Button>
-          </Dropdown>
+          <Button onClick={() => handleComments(number)}>Show Comments</Button>
+
+          {selectedIssue === number && (
+            <List
+              dataSource={commentList}
+              renderItem={(comment: any) => (
+                <List.Item>{comment.key + 1}: {comment.label}</List.Item>
+              )}
+            />
+          )}
         </Card>
       )}
     />

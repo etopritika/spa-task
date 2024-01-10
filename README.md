@@ -1,7 +1,19 @@
-
 ---
 
 # GitHub Issue Tracker Project
+
+## Beginning of work
+
+To run the project on your local computer, follow these steps:
+
+- **1.Install dependencies:** npm install
+
+- **2.Set up a GitHub token:**
+
+Open the .env file.
+Replace the placeholder for REACT_APP_GITHUB_TOKEN with your personal GitHub API access token.
+
+- **3.Launch the application:** npm start
 
 ## Overview
 

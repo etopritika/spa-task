@@ -11,12 +11,10 @@
 }
 
 .content {
-  transition: transform 0.4s ease-in-out; /* Додає плавний перехід */
+  transition: transform 0.4s ease-in-out;
   background-color: #282c34;
 }
 
 .content-dropdown-open {
-  transform: translateY(
-    270px
-  ); /* Рухає блок до низу (ви можете налаштувати потрібний вам offset) */
+  transform: translateY(270px);
 }
