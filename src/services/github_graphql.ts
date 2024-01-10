@@ -136,7 +136,7 @@ export async function fetchIssueWithComments(
             id
             title
             body
-            comments(last: 10) {
+            comments(last: 100) {
               nodes {
                 id
                 body
